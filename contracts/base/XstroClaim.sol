@@ -9,10 +9,16 @@ contract XstroClaim {
   mapping(address => uint256) internal nonces;
 
   constructor(address _authorizer) {
-    authorizer = _authorizer;
+    setAuthorizer(_authorizer);
   }
 
   event Claim(address sender, uint256 amount, uint256 nonce);
+  event SetAuthorizer(address authorizer);
+
+  function setAuthorizer(address _authorizer) public {
+    authorizer = _authorizer;
+    emit SetAuthorizer(_authorizer);
+  }
 
   function _claim(
     uint256 _amount,

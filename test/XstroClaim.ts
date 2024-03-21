@@ -36,6 +36,12 @@ describe(CONTRACT_NAME, function () {
     contractOwnerCalls = contract.connect(owner);
     contractUserCalls = contract.connect(user);
   });
+  it("should emit event if set authorizer", async () => {
+    await expect(contractUserCalls.setAuthorizer(user.address))
+      .emit(contract, "SetAuthorizer")
+      .withArgs(user.address);
+    expect(await contract.authorizer()).eq(user.address);
+  });
   describe("getHash", () => {
     it("should return valid hash", async () => {
       const address = user.address;

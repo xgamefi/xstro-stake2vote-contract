@@ -6,7 +6,7 @@ import "./common.sol";
 
 contract XstroClaim {
   address public authorizer;
-  mapping(address => uint256) nonces;
+  mapping(address => uint256) internal nonces;
 
   constructor(address _authorizer) {
     authorizer = _authorizer;
@@ -20,6 +20,7 @@ contract XstroClaim {
     bytes32 _digest,
     bytes memory _signature
   ) internal {
+    require(_amount > 0, "amount must be > 0");
     require(nonces[msg.sender] == _nonce, "invalid nonce");
     bytes32 digest = ECDSA.toEthSignedMessageHash(_getHash(_amount, _nonce));
     require(digest == _digest, "invalid digest");
@@ -30,10 +31,11 @@ contract XstroClaim {
     emit Claim(msg.sender, _amount, _nonce);
   }
 
-  function _getHash(
-    uint256 _amount,
-    uint256 _nonce
-  ) internal view returns (bytes32) {
+  function _getHash(uint256 _amount, uint256 _nonce) internal view returns (bytes32) {
     return keccak256(abi.encodePacked(msg.sender, _amount, _nonce));
+  }
+
+  function getNonce(address _address) public view returns (uint256) {
+    return nonces[_address];
   }
 }
